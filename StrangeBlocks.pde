@@ -24,14 +24,19 @@ void setup() {
   b = random(10);
   c = random(10);
   
-  size(1920, 1080);
+  fullScreen();
   
-  //beginRecord(PDF, "AfflittoAndrew0.pdf");
-  image(attract(), 0, 0); //run attractor iteration
+  imageMode(CENTER);
+  
+  translate(width/2, height/2);
+  rotate(-PI/4);
+  image(attract(), 0, 0, width, width); //run attractor iteration
 }
 
 void draw() {
-  //do nothing
+  //translate(width/2, height/2);
+  //rotate(-PI/4);
+  //image(attract(), 0, 0, width, width); //run attractor iteration
 }
 
 //Hopalong Attractor
@@ -54,11 +59,9 @@ int sign(float x) {
 }
 
 PImage attract() {
-  PImage attractor = new PImage(width, height);
+  PImage attractor = new PImage(2000, 2000);
   
-  a = random(10);
-  b = random(10);
-  c = random(10);
+
   
   println(a, b, c); //Prints the A, B, and C arguements to be passed into Hopalong
   
@@ -80,12 +83,12 @@ PImage attract() {
     y = yy;
     
     //Convert X and Y to ints and center them in the frame
-    intx = (int)x + width/2;
-    inty = (int)y + height/2;
+    intx = (int)x+ 2000/2;
+    inty = (int)y+ 2000/2;
     
     //Write to the PImage
-    if(intx >= 0 && inty >= 0 && intx < width & inty < height) {
-      attractor.pixels[inty*width + intx] = color(((int)(iterations / 10000000.0 * 360)), 75, 100);
+    if(intx >= 0 && inty >= 0 && intx < 2000 & inty < 2000) {
+      attractor.pixels[inty*2000 + intx] = color(((int)(iterations / 10000000.0 * 360)), 75, 100);
     }
     
     iterations++;
@@ -100,15 +103,29 @@ PImage attract() {
 
 void keyPressed() {
   if(key == 'r' || key == ' ') { //reset program
-    image(attract(), 0, 0);
+    a = random(10);
+    b = random(10);
+    c = random(10);
+    
+    translate(width/2, height/2);
+    rotate(-PI/4);
+    image(attract(), 0, 0, width, width); //run attractor iteration
   } else if(key == 'p') { //Print to PDF
     //endRecord();
     //beginRecord(PDF, "AfflittoAndrew"+(++pdfNum)+".pdf"); //Start new PDF file with incremented name
   } else if(key == 'q' || key == ESC) {
     exit(); 
+  } else if(key == 's') {
+    save("output/"+(pdfNum++)+".png");
   }
 }
 
 void mousePressed(){
-  image(attract(), 0, 0);
+  a = random(10);
+  b = random(10);
+  c = random(10);
+  
+  translate(width/2, height/2);
+  rotate(-PI/4);
+  image(attract(), 0, 0, width, width); //run attractor iteration
 }
