@@ -1,11 +1,11 @@
 //Strange Blocks
 //Andrew Afflitto 2019
-//Fractal generator using the Hopalong Attractor algorithm
+//Fractal generator using the Gumowski-Mira Attractor algorithm
 
 import processing.pdf.*;
 
-float x = 0;
-float y = 0;
+float x = random(-20, 20);
+float y = random(-20, 20);
 
 float xx = 0;
 float yy = 0;
@@ -13,16 +13,17 @@ float yy = 0;
 int intx = 0;
 int inty = 0;
 
-float a, b, c;
+float a, b;
+
+float t, w;
 
 int iterations = 0;
 
 int pdfNum = 0;
 
 void setup() {
-  a = random(10);
-  b = random(10);
-  c = random(10);
+  a = random(-1, 1);
+  b = random(-1, 1);
   
   fullScreen();
   
@@ -40,12 +41,20 @@ void draw() {
 }
 
 //Hopalong Attractor
-float xnew(float x, float y, float a, float b, float c) {
-  return y - 1 - sqrt(abs(b*x - 1 - c))*sign(x-1);  
+//float xnew(float x, float y, float a, float b) {
+//  return y - 1 - sqrt(abs(b*x - 1 - c))*sign(x-1);  
+//}
+
+//float ynew(float x, float y, float a, float b) {
+//  return a - x - 1; 
+//}
+
+float tnew(float x) {
+  return x;
 }
 
-float ynew(float x, float y, float a, float b, float c) {
-  return a - x - 1; 
+float wnew(float x, float a) {
+  return a*x+(1-a)*2*x*x/(1+x*x);
 }
 
 int sign(float x) {
@@ -63,10 +72,10 @@ PImage attract() {
   
 
   
-  println(a, b, c); //Prints the A, B, and C arguements to be passed into Hopalong
+  println(a, b); //Prints the A, B, and C arguements to be passed into Hopalong
   
-  x = 0;
-  y = 0;
+  x = random(-20, 20);
+  y = random(-20, 20);
   
   background(0);
   attractor.loadPixels();
@@ -75,20 +84,23 @@ PImage attract() {
   
   colorMode(HSB, 360, 100, 100);
   
-  while(iterations < 10000000) {
-    xx = xnew(x, y, a, b, c);
-    yy = ynew(x, y, a, b, c);
+  while(iterations < 100000) {
+    t = x;
+    w = wnew(x, a);
+    
+    xx = b * y + w;
+    yy = w - t;
     
     x = xx;
     y = yy;
     
     //Convert X and Y to ints and center them in the frame
-    intx = (int)x+ 2000/2;
-    inty = (int)y+ 2000/2;
+    intx = (int)map(x, -50, 50, 0, 2000/2);
+    inty = (int)map(y, -50, 50, 0, 2000/2);
     
     //Write to the PImage
     if(intx >= 0 && inty >= 0 && intx < 2000 & inty < 2000) {
-      attractor.pixels[inty*2000 + intx] = color(((int)(iterations / 10000000.0 * 360)), 75, 100);
+      attractor.pixels[inty*2000 + intx] = color(((int)(iterations / 100000.0 * 360)), 75, 100);
     }
     
     iterations++;
@@ -103,9 +115,8 @@ PImage attract() {
 
 void keyPressed() {
   if(key == 'r' || key == ' ') { //reset program
-    a = random(10);
-    b = random(10);
-    c = random(10);
+    a = random(-1, 1);
+    b = random(-1, 1);
     
     translate(width/2, height/2);
     rotate(-PI/4);
@@ -121,9 +132,8 @@ void keyPressed() {
 }
 
 void mousePressed(){
-  a = random(10);
-  b = random(10);
-  c = random(10);
+  a = random(-1, 1);
+  b = random(-1, 1);
   
   translate(width/2, height/2);
   rotate(-PI/4);
