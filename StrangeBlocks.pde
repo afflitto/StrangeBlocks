@@ -1,3 +1,7 @@
+//Strange Blocks
+//Andrew Afflitto 2019
+//Fractal generator using the Hopalong Attractor algorithm
+
 import processing.pdf.*;
 
 float x = 0;
@@ -20,17 +24,17 @@ void setup() {
   b = random(10);
   c = random(10);
   
-  size(225, 225);
+  size(1920, 1080);
   
-  beginRecord(PDF, "AfflittoAndrew0.pdf");
+  //beginRecord(PDF, "AfflittoAndrew0.pdf");
   image(attract(), 0, 0); //run attractor iteration
-  //endRecord();
 }
 
 void draw() {
   //do nothing
 }
 
+//Hopalong Attractor
 float xnew(float x, float y, float a, float b, float c) {
   return y - 1 - sqrt(abs(b*x - 1 - c))*sign(x-1);  
 }
@@ -50,14 +54,13 @@ int sign(float x) {
 }
 
 PImage attract() {
-  
-  PImage attractor = new PImage(225, 225);
+  PImage attractor = new PImage(width, height);
   
   a = random(10);
   b = random(10);
   c = random(10);
   
-  println(a, b, c);
+  println(a, b, c); //Prints the A, B, and C arguements to be passed into Hopalong
   
   x = 0;
   y = 0;
@@ -67,21 +70,22 @@ PImage attract() {
   
   iterations = 0;
   
-  while(iterations < 100000) {
+  colorMode(HSB, 360, 100, 100);
+  
+  while(iterations < 10000000) {
     xx = xnew(x, y, a, b, c);
     yy = ynew(x, y, a, b, c);
     
     x = xx;
     y = yy;
     
-    //intx = (int) map(x, -1E1, 1E1, 0, 225);
-    //inty = (int) map(y, -1E1, 1E1, 0, 225);
+    //Convert X and Y to ints and center them in the frame
     intx = (int)x + width/2;
     inty = (int)y + height/2;
     
-        
-    if(intx >= 0 && inty >= 0 && intx < 225 & inty < 225) {
-      attractor.pixels[inty*width + intx] = color(255);
+    //Write to the PImage
+    if(intx >= 0 && inty >= 0 && intx < width & inty < height) {
+      attractor.pixels[inty*width + intx] = color(((int)(iterations / 10000000.0 * 360)), 75, 100);
     }
     
     iterations++;
@@ -95,10 +99,16 @@ PImage attract() {
 }
 
 void keyPressed() {
-  if(key == 'r') { //reset
+  if(key == 'r' || key == ' ') { //reset program
     image(attract(), 0, 0);
-  } else if(key == 'p') {
-    endRecord();
-    beginRecord(PDF, "AfflittoAndrew"+(++pdfNum)+".pdf");
+  } else if(key == 'p') { //Print to PDF
+    //endRecord();
+    //beginRecord(PDF, "AfflittoAndrew"+(++pdfNum)+".pdf"); //Start new PDF file with incremented name
+  } else if(key == 'q' || key == ESC) {
+    exit(); 
   }
+}
+
+void mousePressed(){
+  image(attract(), 0, 0);
 }
