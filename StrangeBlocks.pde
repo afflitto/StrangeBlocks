@@ -4,8 +4,8 @@
 
 import processing.pdf.*;
 
-float x = 0;
-float y = 0;
+float x = 0.1;
+float y = 0.1;
 
 float xx = 0;
 float yy = 0;
@@ -13,16 +13,17 @@ float yy = 0;
 int intx = 0;
 int inty = 0;
 
-float a, b, c;
+float a, b, c, d;
 
 int iterations = 0;
 
 int pdfNum = 0;
 
 void setup() {
-  a = random(10);
-  b = random(10);
-  c = random(10);
+  a = random(-3, 3);
+  b = random(-3, 3);
+  c = random(-0.5, 1.5);
+  d = random(-0.5, 1.5);
   
   fullScreen();
   
@@ -40,12 +41,12 @@ void draw() {
 }
 
 //Hopalong Attractor
-float xnew(float x, float y, float a, float b, float c) {
-  return y - 1 - sqrt(abs(b*x - 1 - c))*sign(x-1);  
+float xnew(float x, float y, float a, float b, float c, float d) {
+  return sin(y*b)+c*sin(x*b);
 }
 
-float ynew(float x, float y, float a, float b, float c) {
-  return a - x - 1; 
+float ynew(float x, float y, float a, float b, float c, float d) {
+  return sin(x*a)+d*sin(y*a);
 }
 
 int sign(float x) {
@@ -65,8 +66,8 @@ PImage attract() {
   
   println(a, b, c); //Prints the A, B, and C arguements to be passed into Hopalong
   
-  x = 0;
-  y = 0;
+  x = 0.1;
+  y = 0.1;
   
   background(0);
   attractor.loadPixels();
@@ -75,20 +76,22 @@ PImage attract() {
   
   colorMode(HSB, 360, 100, 100);
   
-  while(iterations < 10000000) {
-    xx = xnew(x, y, a, b, c);
-    yy = ynew(x, y, a, b, c);
+  while(iterations < 100000) {
+    xx = xnew(x, y, a, b, c, d);
+    yy = ynew(x, y, a, b, c, d);
     
     x = xx;
     y = yy;
     
     //Convert X and Y to ints and center them in the frame
-    intx = (int)x+ 2000/2;
-    inty = (int)y+ 2000/2;
+    //intx = (int)x + 2000/2;
+    //inty = (int)y + 2000/2;
+    intx = (int) map(x, -5, 5, 0, 2000);
+    inty = (int) map(y, -5, 5, 0, 2000);
     
     //Write to the PImage
     if(intx >= 0 && inty >= 0 && intx < 2000 & inty < 2000) {
-      attractor.pixels[inty*2000 + intx] = color(((int)(iterations / 10000000.0 * 360)), 75, 100);
+      attractor.pixels[inty*2000 + intx] = color(((int)(iterations / 100000.0 * 360)), 75, 100);
     }
     
     iterations++;
@@ -103,9 +106,10 @@ PImage attract() {
 
 void keyPressed() {
   if(key == 'r' || key == ' ') { //reset program
-    a = random(10);
-    b = random(10);
-    c = random(10);
+    a = random(-3, 3);
+    b = random(-3, 3);
+    c = random(-0.5, 1.5);
+    d = random(-0.5, 1.5);
     
     translate(width/2, height/2);
     rotate(-PI/4);
@@ -116,7 +120,7 @@ void keyPressed() {
   } else if(key == 'q' || key == ESC) {
     exit(); 
   } else if(key == 's') {
-    save("output/"+(pdfNum++)+".png");
+    save("output/dream/"+(pdfNum++)+".png");
   }
 }
 
